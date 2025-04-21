@@ -2,7 +2,6 @@ package io.nology.events_calendar.calendar_event;
 
 import java.util.List;
 
-import org.apache.catalina.connector.Response;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -12,6 +11,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import jakarta.validation.Valid;
@@ -36,6 +36,18 @@ public class CalendarEventController {
     public ResponseEntity<CalendarEvent> getCalendarEventById(@PathVariable Long id){
         CalendarEvent found = this.service.getCalendarEventById(id);
         return new ResponseEntity<>(found, HttpStatus.OK);
+    }
+
+    @GetMapping("/location/{term}")
+    public ResponseEntity<List<CalendarEvent>> getCalendarEventByLocation (@PathVariable String term) {
+        List<CalendarEvent> eventsByLocation = this.service.getCalendarEventByLocation(term);
+        return new ResponseEntity<>(eventsByLocation, HttpStatus.OK);
+    }
+
+    @GetMapping("/label/{id}")
+    public ResponseEntity<List<CalendarEvent>> getCalendarEventByLabel (@PathVariable String id) {
+        List<CalendarEvent> eventsByLabel = this.service.getCalendarEventsByLabel(id);
+        return new ResponseEntity<>(eventsByLabel, HttpStatus.OK);
     }
 
     @PostMapping()
