@@ -3,13 +3,16 @@ package io.nology.events_calendar.label;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import io.nology.events_calendar.event.Event;
+// import io.nology.events_calendar.event.Event;
+
+import io.nology.events_calendar.calendar_event.CalendarEvent;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
@@ -32,12 +35,11 @@ public class Label {
     @Column
     private String name;
 
-    @OneToMany
-    @JoinColumn(name = "events_id")
-    private List<Event> events;
-
     @Column
     private Boolean deleted;
+
+    @OneToMany(mappedBy="labelId")
+    private List<CalendarEvent> calendarEvents;
 
     @Column
     @Temporal(TemporalType.TIMESTAMP)

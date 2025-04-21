@@ -1,6 +1,11 @@
-package io.nology.events_calendar.event;
+package io.nology.events_calendar.calendar_event;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIdentityReference;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 import io.nology.events_calendar.label.Label;
 import jakarta.persistence.Column;
@@ -9,6 +14,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
@@ -20,12 +26,12 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "events")
+@Table(name="calendarEvents")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class Event {
-
+public class CalendarEvent {
+    
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -34,14 +40,22 @@ public class Event {
     private String title;
 
     @Column
+    private LocalDate eventDate;
+
+    @Column
     private LocalDateTime eventTime;
 
     @Column
     private String location;
 
+    @Column
+    private Boolean hasHappened;
+
     @ManyToOne
     @JoinColumn(name = "labelId", nullable = true)
-    private Label label;
+    @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
+    @JsonIdentityReference(alwaysAsId = true)
+    private Label labelId;
 
     @Column
     private Boolean deleted;
@@ -65,5 +79,4 @@ public class Event {
     public void onUpdate() {
         updatedAt = LocalDateTime.now();
     }
-
 }
