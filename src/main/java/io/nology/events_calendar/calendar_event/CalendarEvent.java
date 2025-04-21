@@ -3,6 +3,10 @@ package io.nology.events_calendar.calendar_event;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIdentityReference;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+
 import io.nology.events_calendar.label.Label;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -44,9 +48,14 @@ public class CalendarEvent {
     @Column
     private String location;
 
+    @Column
+    private Boolean hasHappened;
+
     @ManyToOne
     @JoinColumn(name = "labelId", nullable = true)
-    private Label label;
+    @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
+    @JsonIdentityReference(alwaysAsId = true)
+    private Label labelId;
 
     @Column
     private Boolean deleted;

@@ -1,14 +1,10 @@
 package io.nology.events_calendar.calendar_event;
 
-import java.util.Calendar;
 import java.util.List;
 import java.util.Optional;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
-
-import jakarta.validation.Valid;
-
 
 @Service
 public class CalendarEventService {
@@ -35,7 +31,6 @@ public class CalendarEventService {
     }
 
     public CalendarEvent createCalendarEvent(CreateCalendarEventDTO data) {
-
         CalendarEvent newCalEvent = mapper.map(data, CalendarEvent.class);
         return this.repo.save(newCalEvent);
     }
