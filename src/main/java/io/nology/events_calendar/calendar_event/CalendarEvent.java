@@ -1,5 +1,6 @@
-package io.nology.events_calendar.event;
+package io.nology.events_calendar.calendar_event;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 import io.nology.events_calendar.label.Label;
@@ -9,6 +10,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
@@ -20,18 +22,21 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "events")
+@Table(name="calendarEvents")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class Event {
-
+public class CalendarEvent {
+    
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column
     private String title;
+
+    @Column
+    private LocalDate eventDate;
 
     @Column
     private LocalDateTime eventTime;
@@ -65,5 +70,4 @@ public class Event {
     public void onUpdate() {
         updatedAt = LocalDateTime.now();
     }
-
 }
