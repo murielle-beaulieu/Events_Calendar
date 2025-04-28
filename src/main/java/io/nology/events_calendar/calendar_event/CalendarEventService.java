@@ -3,6 +3,7 @@ package io.nology.events_calendar.calendar_event;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Optional;
+import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
@@ -38,7 +39,16 @@ public class CalendarEventService {
     }
 
     public CalendarEvent createCalendarEvent(CreateCalendarEventDTO data) {
+
+        Optional<Label> labelResult = labelRepo.findById(data.getLabel_id());
+        if (labelResult.isEmpty()) {
+            Label labelFound = null;
+        }
+        Label labelFound = labelResult.get();
+
         CalendarEvent newCalEvent = mapper.map(data, CalendarEvent.class);
+        newCalEvent.setLabel_id(labelFound);
+
         return this.eventRepo.save(newCalEvent);
     }
 
@@ -49,7 +59,7 @@ public class CalendarEventService {
         }
         CalendarEvent found = result.get();
 
-        Optional<Label> labelResult = labelRepo.findById(data.getLabelId());
+        Optional<Label> labelResult = labelRepo.findById(data.getLabel_id());
         Label labelFound = labelResult.get();
 
         found.setTitle(data.getTitle());
@@ -57,7 +67,7 @@ public class CalendarEventService {
         found.setEventTime(data.getEventTime());
         found.setLocation(data.getLocation());
         found.setDeleted(data.getDeleted());
-        found.setLabelId(labelFound);
+        found.setLabel_id(labelFound);
 
         return this.eventRepo.save(found);
     }
@@ -73,19 +83,21 @@ public class CalendarEventService {
         List<CalendarEvent> all = this.eventRepo.findAll();
         List<CalendarEvent> eventsByLocation = new ArrayList<>();
 
-        eventsByLocation = all.stream().filter((event) -> event.getLocation().equals(term)).collect(Collectors.toList());
+        eventsByLocation = all.stream().filter((event) ->(event.getLocation().toLowerCase()).equals(term.toLowerCase())).collect(Collectors.toList());
 
         return eventsByLocation;
     }
 
-    public List<CalendarEvent> getCalendarEventsByLabel(String id) {
+    public List<CalendarEvent> getCalendarEventsByLabel(Long id) {
+
         List<CalendarEvent> all = this.eventRepo.findAll();
         List<CalendarEvent> eventsByLabel = new ArrayList<>();
 
         Optional<Label> found = labelRepo.findById(id);
-        Label label = found.get();
+        Label result = found.get();
 
-        eventsByLabel = all.stream().filter((event) -> event.getLabelId().getName().equals(label.getName())).collect(Collectors.toList());
+        all = all.stream().filter((e) -> e.getLabel_id()!= null).collect(Collectors.toList());
+        eventsByLabel = all.stream().filter((event) -> event.getLabel_id().getId().equals(result.getId())).collect(Collectors.toList());
 
         return eventsByLabel;
     }
