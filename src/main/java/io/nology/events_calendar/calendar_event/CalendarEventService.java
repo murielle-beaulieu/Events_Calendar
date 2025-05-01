@@ -3,7 +3,6 @@ package io.nology.events_calendar.calendar_event;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Optional;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
