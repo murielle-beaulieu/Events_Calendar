@@ -36,7 +36,7 @@ public class Label {
     @Column
     private Boolean deleted;
 
-    @OneToMany(mappedBy="labelId")
+    @OneToMany(mappedBy="label_id")
     private List<CalendarEvent> calendarEvents;
 
     @Column

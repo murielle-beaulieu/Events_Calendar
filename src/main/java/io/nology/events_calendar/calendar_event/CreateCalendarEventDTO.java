@@ -18,7 +18,7 @@ public class CreateCalendarEventDTO {
     @NotBlank
     private String location;
 
-    private Long labelId;
+    private Long label_id;
 
     private Boolean deleted = false;
 

@@ -54,8 +54,8 @@ public class CalendarEvent {
     @JoinColumn(name = "label_id", nullable = true)
     @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
     @JsonIdentityReference(alwaysAsId = true)
-    private Label labelId;
-
+    private Label label_id;
+    
     @Column
     private Boolean deleted;
 
