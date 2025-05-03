@@ -1,0 +1,27 @@
+.cell {
+    height: 12em;
+    width: 12em;
+    border: 1px solid red;
+    text-align: left;
+    p {
+        padding: 0 1em;
+    }
+}
+
+.weekdays {
+    display: flex;
+    flex-direction: row;
+    max-width: 86em;
+}
+
+.day {
+    height: 5em;
+    width: 12em;
+    border: black 1px solid;
+}
+
+.month {
+    display: flex;
+    flex-wrap: wrap;
+    max-width: 86em;
+}
