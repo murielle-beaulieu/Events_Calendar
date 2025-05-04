@@ -25,3 +25,11 @@
     flex-wrap: wrap;
     max-width: 86em;
 }
+
+header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: row;
+    gap: 4em;
+}
