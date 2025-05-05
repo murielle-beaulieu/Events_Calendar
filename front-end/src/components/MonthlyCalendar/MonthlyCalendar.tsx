@@ -1,4 +1,4 @@
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import styles from "./MonthlyCalendar.module.scss";
 import { CalendarEvent, CalendarEventContext, useCalEvents } from "../../context/CalendarEventsContext";
 
@@ -13,8 +13,14 @@ function MonthlyCalendar() {
     "Sunday",
   ];
 
+  const [modalOpen, setModalOpen] = useState(false);
   const { allCalendarEvents } = useCalEvents();
   const [calData, setCalData] = useState<CalendarEvent[] | null>(allCalendarEvents);
+
+  useEffect(() => {
+    setCalData(allCalendarEvents);
+  },[allCalendarEvents])
+  
   console.log(calData);
   
   let date = new Date();
@@ -59,6 +65,13 @@ function MonthlyCalendar() {
     setYear(new Date().getFullYear());
   }
 
+  const [calendarDay, setCalendarDay] = useState<null|number>(null)
+
+  function displayModal(n: number | null, value: boolean) {
+    setModalOpen(value);
+    setCalendarDay(n);
+  }
+
   return (
     <div>
       <section>
@@ -76,10 +89,14 @@ function MonthlyCalendar() {
         })}
       </div>
       <div className={styles.month}>
+        {modalOpen ? <article className={styles.modal}><h1>"MEEP"</h1><h2>{monthName} {calendarDay}</h2><button onClick={() => displayModal(null, false)}>Close modal</button>
+        {calData?.map((e) => 
+                calendarDay != null && e.day == `${calendarDay}` && e.month == `${month}` && e.year == `${year}` ? ( <h2>meep</h2>) : (<></>)
+              )}</article> : <></> }
         {daysArr.map((n) => {
           let j = 1;
           return (
-            <div className={styles.cell}>
+            <div className={styles.cell} onClick={() => displayModal(n, true)}>
               <p>{n}</p>
               {calData?.map((e) =>
                 n != null && e.day == `${n}` && e.month == `${month}` && e.year == `${year}` ? ( <h2>meep</h2>) : (<></>)

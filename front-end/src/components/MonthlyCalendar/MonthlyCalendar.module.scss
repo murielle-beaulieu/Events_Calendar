@@ -33,3 +33,14 @@ header {
     flex-direction: row;
     gap: 4em;
 }
+
+.modal {
+    border: 1px solid green;
+    background-color: green;
+    color: white;
+    padding: 10em;
+    height: 10em;
+    width: 10em;
+    position: absolute;
+    z-index: 1;
+}
