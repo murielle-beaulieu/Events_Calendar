@@ -1,6 +1,15 @@
-import { useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import styles from "./MonthlyCalendar.module.scss";
-import { CalendarEvent, CalendarEventContext, useCalEvents } from "../../context/CalendarEventsContext";
+import {
+  CalendarEvent,
+  Label,
+  useEvents,
+} from "../../context/CalendarEventsContext";
+import EventForm from "../EventForm/EventForm";
+import Modal from "../Modal/Modal";
+import { useDisplay } from "../../context/DisplayContext";
+import { EventFormData } from "../EventForm/schema";
+import CalendarItem from "../CalendarItem/CalendarItem";
 
 function MonthlyCalendar() {
   const weekdays = [
@@ -13,18 +22,20 @@ function MonthlyCalendar() {
     "Sunday",
   ];
 
-  const [modalOpen, setModalOpen] = useState(false);
-  const { allCalendarEvents } = useCalEvents();
-  const [calData, setCalData] = useState<CalendarEvent[] | null>(allCalendarEvents);
+  const { allCalendarEvents, allLabels } = useEvents();
+  const { modalOpen, setModalOpen, modalType, setModalType } = useDisplay();
+
+  const [eventData, setEventData] = useState<CalendarEvent[] | null>(
+    allCalendarEvents
+  );
+  const [labelData, setLabelData] = useState<Label[] | null>(allLabels);
 
   useEffect(() => {
-    setCalData(allCalendarEvents);
-  },[allCalendarEvents])
-  
-  console.log(calData);
-  
+    setEventData(allCalendarEvents);
+    setLabelData(labelData);
+  }, [allCalendarEvents, labelData]);
+
   let date = new Date();
-  console.log(date);
 
   const [month, setMonth] = useState(new Date().getMonth()); // month starts from 0: Jan, 1: Feb, 2: March, 3: April
   const [monthName, setMonthName] = useState(
@@ -43,7 +54,7 @@ function MonthlyCalendar() {
   }
 
   for (let i = 1; i <= daysInMonth; i++) {
-    daysArr.push(i) ;
+    daysArr.push(i);
   }
 
   function changeMonth(dir: string): void {
@@ -65,47 +76,83 @@ function MonthlyCalendar() {
     setYear(new Date().getFullYear());
   }
 
-  const [calendarDay, setCalendarDay] = useState<null|number>(null)
+  const [calendarDay, setCalendarDay] = useState<null | number>(null);
 
-  function displayModal(n: number | null, value: boolean) {
+  function dayModal(n: number | null, value: boolean) {
     setModalOpen(value);
     setCalendarDay(n);
   }
 
+  // new date is month/day/year and locale date string is day/month/year
+  // console.log(new Date(`${month}/1/${year}`).toLocaleDateString());
+
+  const submitNewEvent = (data: EventFormData) => {
+    console.log(data.title);
+  };
+
   return (
-    <div>
-      <section>
-        <h2> big ol calendar</h2>
-        <button onClick={() => today()}>come back to today</button>
-      </section>
+    <main className={styles.cal_month}>
+      {modalType == "form" ? (
+        <Modal>
+          <EventForm onSubmit={submitNewEvent} />
+          <button onClick={() => setModalType(null)}>Close modal</button>
+        </Modal>
+      ) : (
+        <></>
+      )}
       <header>
         <button onClick={() => changeMonth("-")}>last month</button>
         <h1>{monthName}</h1>
         <button onClick={() => changeMonth("+")}>next month</button>
       </header>
+      <div>
+        <button onClick={() => today()}>today</button>
+      </div>
       <div className={styles.weekdays}>
         {weekdays.map((d) => {
           return <div className={styles.day}>{d}</div>;
         })}
       </div>
+      {}
       <div className={styles.month}>
-        {modalOpen ? <article className={styles.modal}><h1>"MEEP"</h1><h2>{monthName} {calendarDay}</h2><button onClick={() => displayModal(null, false)}>Close modal</button>
-        {calData?.map((e) => 
-                calendarDay != null && e.day == `${calendarDay}` && e.month == `${month}` && e.year == `${year}` ? ( <h2>meep</h2>) : (<></>)
-              )}</article> : <></> }
+        {modalOpen ? (
+          <article className={styles.modal}>
+            <h1>This is the day modal</h1>
+            <h2>
+              {monthName} {calendarDay}
+            </h2>
+            <button onClick={() => dayModal(null, false)}>Close modal</button>
+            {eventData?.map((e) =>
+              calendarDay != null &&
+              e.day == `${calendarDay}` &&
+              e.month == `${month}` &&
+              e.year == `${year}` ? (
+                <CalendarItem item={e} />
+              ) : (
+                <></>
+              )
+            )}
+          </article>
+        ) : (
+          <></>
+        )}
         {daysArr.map((n) => {
-          let j = 1;
           return (
-            <div className={styles.cell} onClick={() => displayModal(n, true)}>
+            <div className={styles.cell} onClick={() => dayModal(n, true)}>
               <p>{n}</p>
-              {calData?.map((e) =>
-                n != null && e.day == `${n}` && e.month == `${month}` && e.year == `${year}` ? ( <h2>meep</h2>) : (<></>)
+              {eventData?.map((e) =>
+                new Date(e.eventDate).toLocaleDateString() ==
+                new Date(`${month}/${n}/${year}`).toLocaleDateString() ? (
+                  <CalendarItem item={e} />
+                ) : (
+                  <></>
+                )
               )}
             </div>
           );
         })}
       </div>
-    </div>
+    </main>
   );
 }
 

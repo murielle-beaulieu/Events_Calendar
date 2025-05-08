@@ -1,0 +1,14 @@
+.side_menu {
+    height: 100%;
+    width: 10%;
+    position: absolute;
+    z-index: 1;
+    top: 0;
+    left: 0;
+    padding: 3em;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background-color: rgb(237, 237, 238);
+}
