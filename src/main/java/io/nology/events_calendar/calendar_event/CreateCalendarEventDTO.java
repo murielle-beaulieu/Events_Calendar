@@ -15,10 +15,16 @@ public class CreateCalendarEventDTO {
 
     private LocalDateTime eventTime;
 
+    private String day;
+
+    private String month;
+
+    private String year;
+
     @NotBlank
     private String location;
 
-    private Long label_id;
+    private Long label;
 
     private Boolean deleted = false;
 

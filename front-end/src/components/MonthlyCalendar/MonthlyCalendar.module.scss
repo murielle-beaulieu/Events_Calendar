@@ -1,35 +1,52 @@
 .cell {
-    height: 12em;
-    width: 12em;
-    border: 1px solid red;
-    text-align: left;
-    p {
-        padding: 0 1em;
-    }
+  height: 10em;
+  width: 12em;
+  border: 1px solid red;
+  text-align: left;
+  p {
+    padding: 0 1em;
+  }
 }
 
 .weekdays {
-    display: flex;
-    flex-direction: row;
-    max-width: 86em;
+  display: flex;
+  flex-direction: row;
+  max-width: 86em;
 }
 
 .day {
-    height: 5em;
-    width: 12em;
-    border: black 1px solid;
+  height: 3em;
+  width: 12em;
+  border: black 1px solid;
 }
 
 .month {
-    display: flex;
-    flex-wrap: wrap;
-    max-width: 86em;
+  display: flex;
+  flex-wrap: wrap;
+  max-width: 86em;
 }
 
 header {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-direction: row;
-    gap: 4em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: row;
+  gap: 4em;
+  margin-top: 1em;
+}
+
+.modal {
+  border: 1px solid rgb(216, 239, 245);
+  background-color: rgb(216, 239, 245);
+  color: rgb(26, 76, 89);
+  padding: 3em;
+  height: 30em;
+  width: 30em;
+  position: absolute;
+  z-index: 1;
+}
+
+.cal_month {
+  position: absolute;
+  left: 22%;
 }

@@ -18,5 +18,5 @@ public class UpdateCalendarEventDTO {
 
     private Boolean deleted;
 
-    private Long label_id;
+    private Long label;
 }

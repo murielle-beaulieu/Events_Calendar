@@ -1,15 +1,18 @@
 import { Routes, Route, BrowserRouter } from "react-router";
 import "./App.css";
-import MonthlyCalendar from "./components/MonthlyCalendar/MonthlyCalendar";
 import { CalendarEventContextProvider } from "./context/CalendarEventsContext";
+import MonthPage from "./pages/MonthPage";
+import { DisplayContextProvider } from "./context/DisplayContext";
 
 function App() {
   return (
     <BrowserRouter>
       <CalendarEventContextProvider>
-        <Routes>
-          <Route path="/" element={<MonthlyCalendar />} />
-        </Routes>
+        <DisplayContextProvider>
+          <Routes>
+            <Route path="/" element={<MonthPage />} />
+          </Routes>
+        </DisplayContextProvider>
       </CalendarEventContextProvider>
     </BrowserRouter>
   );

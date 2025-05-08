@@ -42,6 +42,15 @@ public class CalendarEvent {
     private LocalDate eventDate;
 
     @Column
+    private String day;
+
+    @Column 
+    private String month;
+
+    @Column 
+    private String year;
+
+    @Column
     private LocalDateTime eventTime;
 
     @Column
@@ -51,10 +60,10 @@ public class CalendarEvent {
     private Boolean hasHappened;
 
     @ManyToOne
-    @JoinColumn(name = "label_id", nullable = true)
+    @JoinColumn(name = "label", nullable = true)
     @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
     @JsonIdentityReference(alwaysAsId = true)
-    private Label label_id;
+    private Label label;
     
     @Column
     private Boolean deleted;
