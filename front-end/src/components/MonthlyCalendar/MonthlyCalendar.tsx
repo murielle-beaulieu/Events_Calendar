@@ -114,6 +114,14 @@ function MonthlyCalendar() {
       ) : (
         <></>
       )}
+      {modalType == "label" ? (
+        <Modal>
+          <LabelForm onSubmit={() => console.log("labels")} />
+          <button onClick={() => setModalType(null)}>Close modal</button>
+        </Modal>
+      ) : (
+        <></>
+      )}
       <header>
         <button onClick={() => changeMonth("-")}>last month</button>
         <h1>

@@ -8,6 +8,10 @@ function SideMenu() {
     setModalType("form");
   }
 
+  function createLabel() {
+    setModalType("label");
+  }
+
   function today() {
     setMonthName(new Date().toLocaleDateString("default", { month: "long" }));
     setMonth(new Date().getMonth());
@@ -20,7 +24,7 @@ function SideMenu() {
       <p>Create a new event</p>
       <button onClick={() => createEvent()}>Create event</button>
       <p>Create a new label</p>
-      <button onClick={() => console.log("label")}>Create label</button>
+      <button onClick={() => createLabel()}>Create label</button>
       {/* <p>Allows you to change the view (day/week/month)</p>
       <button onClick={() => console.log("view")}>Month</button> */}
       <p>Back to today</p>
