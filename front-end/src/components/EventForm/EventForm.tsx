@@ -30,7 +30,7 @@ function EventForm({ onSubmit }: EventFormProps) {
         )}
       </div>
       <div>
-        <label>Date 2</label>
+        <label>Date </label>
         <input type="date" {...register("eventDate")} />
         {errors.title && (
           <small style={{ color: "red" }}>{errors.eventDate?.message}</small>

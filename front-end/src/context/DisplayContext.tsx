@@ -9,6 +9,14 @@ interface DisplayContextType {
   setModalOpen: (data: boolean) => unknown;
   modalType: string | null;
   setModalType: (data: string | null) => unknown;
+  month: number;
+  setMonth: (data: number) => unknown;
+  monthName: string;
+  setMonthName: (data: string) => unknown;
+  year: number;
+  setYear: (data: number) => unknown;
+  daysInMonth: number;
+  firstDayOfMonth: number;
 }
 
 export const DisplayContext = createContext<DisplayContextType | undefined>(
@@ -21,9 +29,18 @@ export const DisplayContextProvider = ({
   const [modalOpen, setModalOpen] = useState(false);
   const [modalType, setModalType] = useState<string | null>(null);
 
+  const [month, setMonth] = useState(new Date().getMonth()); // month starts from 0: Jan, 1: Feb, 2: March, 3: April
+  const [monthName, setMonthName] = useState(
+    new Date().toLocaleDateString("default", { month: "long" })
+  );
+  const [year, setYear] = useState(new Date().getFullYear());
+
+  const daysInMonth = new Date(year, month, 0).getDate();
+  const firstDayOfMonth = new Date(year, month, 0).getDay(); // day which the month starts on (monday, tuesday, etc)
+
   return (
     <DisplayContext.Provider
-      value={{ modalOpen, setModalOpen, modalType, setModalType }}
+      value={{ modalOpen, setModalOpen, modalType, setModalType, month, setMonth, monthName, setMonthName, year, setYear, daysInMonth, firstDayOfMonth }}
     >
       {children}
     </DisplayContext.Provider>
