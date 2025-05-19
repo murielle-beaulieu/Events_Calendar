@@ -1,5 +1,5 @@
 import { useForm } from "react-hook-form";
-import { EventFormData, schema } from "./schema";
+import { EventFormData, schema } from "./event-schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 interface EventFormProps {

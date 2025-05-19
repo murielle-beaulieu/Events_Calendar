@@ -1,9 +1,12 @@
+import { useEvents } from "../../context/CalendarEventsContext";
 import { useDisplay } from "../../context/DisplayContext";
+import LabelList from "../LabelList/LabelList";
 import styles from "./SideMenu.module.scss";
 
 function SideMenu() {
   const { setModalType, setMonthName, setMonth, setYear } = useDisplay();
-
+  const { allLabels} = useEvents();
+  
   function createEvent() {
     setModalType("form");
   }
@@ -29,6 +32,8 @@ function SideMenu() {
       <button onClick={() => console.log("view")}>Month</button> */}
       <p>Back to today</p>
       <button onClick={() => today()}>Today</button>
+
+      <LabelList data={allLabels}/>
     </section>
   );
 }

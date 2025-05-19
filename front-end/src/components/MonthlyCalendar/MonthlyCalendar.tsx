@@ -10,7 +10,9 @@ import Modal from "../Modal/Modal";
 import { useDisplay } from "../../context/DisplayContext";
 import CalendarItem from "../CalendarItem/CalendarItem";
 import { ToastContainer, toast } from "react-toastify";
-import { EventFormData } from "../EventForm/schema";
+import { EventFormData } from "../EventForm/event-schema";
+import LabelForm from "../LabelForm/LabelForm";
+import { LabelFormData } from "../LabelForm/label-schema";
 
 function MonthlyCalendar() {
   const weekdays = [
@@ -23,7 +25,7 @@ function MonthlyCalendar() {
     "Sunday",
   ];
 
-  const { allCalendarEvents, allLabels, submitNewEvent } = useEvents();
+  const { allCalendarEvents, allLabels, submitNewEvent, submitNewLabel } = useEvents();
 
   const {
     modalOpen,
@@ -103,6 +105,14 @@ function MonthlyCalendar() {
       .catch((e) => console.log(e));
   };
 
+  const createNewLabel = (data: LabelFormData) => {
+    submitNewLabel(data).then(() => {
+        notify("Success");
+        setModalType(null);
+      })
+      .catch((e) => console.log(e));
+  }
+
   return (
     <main className={styles.cal_month}>
       <ToastContainer />
@@ -116,7 +126,7 @@ function MonthlyCalendar() {
       )}
       {modalType == "label" ? (
         <Modal>
-          <LabelForm onSubmit={() => console.log("labels")} />
+          <LabelForm onSubmit={createNewLabel} />
           <button onClick={() => setModalType(null)}>Close modal</button>
         </Modal>
       ) : (

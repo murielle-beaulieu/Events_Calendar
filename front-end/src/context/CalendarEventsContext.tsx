@@ -7,7 +7,8 @@ import {
   useState,
 } from "react";
 import CalendarEvent from "../components/CalendarItem/CalendarItem";
-import { EventFormData } from "../components/EventForm/schema";
+import { EventFormData } from "../components/EventForm/event-schema";
+import { LabelFormData } from "../components/LabelForm/label-schema";
 
 interface CalendarEventContextProviderProps {
   children: ReactNode;
@@ -35,7 +36,8 @@ export interface Label {
 interface CalendarEventContextType {
   allCalendarEvents: CalendarEvent[];
   allLabels: Label[];
-  submitNewEvent: (data: EventFormData) => Promise<CalendarEvent[]>;
+  submitNewEvent: (data: EventFormData) => Promise<void>;
+  submitNewLabel: (data: LabelFormData) => Promise<void>
 }
 
 export const CalendarEventContext = createContext<
@@ -74,6 +76,20 @@ export const CalendarEventContextProvider = ({
     }
   };
 
+
+  const submitNewLabel = async (data: LabelFormData) => {
+    try {
+      const response = await axios.post(
+        "http://localhost:8080/labels",
+        data
+      );
+      getAllLabels();
+      console.log("Success:", response.data);
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  };
+
   const getAllLabels = async () => {
     try {
       const response = await axios.get<Label[]>("http://localhost:8080/labels");
@@ -91,7 +107,7 @@ export const CalendarEventContextProvider = ({
 
   return (
     <CalendarEventContext.Provider
-      value={{ allCalendarEvents, allLabels, submitNewEvent }}
+      value={{ allCalendarEvents, allLabels, submitNewEvent,submitNewLabel }}
     >
       {children}
     </CalendarEventContext.Provider>
