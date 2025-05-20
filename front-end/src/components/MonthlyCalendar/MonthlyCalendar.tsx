@@ -41,6 +41,9 @@ function MonthlyCalendar() {
     firstDayOfMonth,
   } = useDisplay();
 
+  console.log(month);
+  console.log(daysInMonth);
+
   const [eventData, setEventData] = useState<CalendarEvent[] | null>(
     allCalendarEvents
   );
@@ -71,7 +74,7 @@ function MonthlyCalendar() {
       setMonth(month + 1);
       date = new Date(year, month + 1, 1);
       if(date.getMonth() == 0) {
-        setDisplayYear(displayYear+1);
+        setDisplayYear(displayYear += 1);
       }
       console.log(date.getFullYear());
       setMonthName(date.toLocaleDateString("default", { month: "long" }));

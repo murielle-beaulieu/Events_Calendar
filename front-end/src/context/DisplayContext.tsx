@@ -35,7 +35,8 @@ export const DisplayContextProvider = ({
   );
   const [year, setYear] = useState(new Date().getFullYear());
 
-  const daysInMonth = new Date(year, month, 0).getDate();
+  const daysInMonth = new Date(year, month + 1, 0).getDate();
+  console.log(daysInMonth + " from display context and month " + month);
   const firstDayOfMonth = new Date(year, month, 0).getDay(); // day which the month starts on (monday, tuesday, etc)
 
   return (
