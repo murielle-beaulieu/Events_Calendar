@@ -1,12 +1,15 @@
 import { useForm } from "react-hook-form";
-import { EventFormData, schema } from "./schema";
+import { EventFormData, schema } from "./event-schema";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useEvents } from "../../context/CalendarEventsContext";
 
 interface EventFormProps {
   onSubmit: (data: EventFormData) => unknown;
 }
 
 function EventForm({ onSubmit }: EventFormProps) {
+  const { allLabels } = useEvents();
+
   const {
     register,
     handleSubmit,
@@ -30,17 +33,24 @@ function EventForm({ onSubmit }: EventFormProps) {
         )}
       </div>
       <div>
-        <label>Date 2</label>
+        <label>Date </label>
         <input type="date" {...register("eventDate")} />
         {errors.title && (
           <small style={{ color: "red" }}>{errors.eventDate?.message}</small>
         )}
       </div>
       {/* We will cycle through the data receive from fetching labels */}
-      {/* <div>
-                <label>Label</label>
-                <input type="label" {...register("label")}/>
-            </div> */}
+      {allLabels && (
+        <div>
+          <label>Label</label>
+          <select {...register("label")}>
+            <option value="null">No label</option>
+          {allLabels.map((label) => (
+            <option value={label.id}>{label.name} with id {label.id}</option>
+          ))}
+          </select>
+        </div>
+      )}
       <button>Submit</button>
     </form>
   );

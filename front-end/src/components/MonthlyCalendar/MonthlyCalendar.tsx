@@ -8,8 +8,11 @@ import {
 import EventForm from "../EventForm/EventForm";
 import Modal from "../Modal/Modal";
 import { useDisplay } from "../../context/DisplayContext";
-import { EventFormData } from "../EventForm/schema";
 import CalendarItem from "../CalendarItem/CalendarItem";
+import { ToastContainer, toast } from "react-toastify";
+import { EventFormData } from "../EventForm/event-schema";
+import LabelForm from "../LabelForm/LabelForm";
+import { LabelFormData } from "../LabelForm/label-schema";
 
 function MonthlyCalendar() {
   const weekdays = [
@@ -22,8 +25,24 @@ function MonthlyCalendar() {
     "Sunday",
   ];
 
-  const { allCalendarEvents, allLabels } = useEvents();
-  const { modalOpen, setModalOpen, modalType, setModalType } = useDisplay();
+  const { allCalendarEvents, allLabels, submitNewEvent, submitNewLabel } = useEvents();
+
+  const {
+    modalOpen,
+    setModalOpen,
+    modalType,
+    setModalType,
+    month,
+    setMonth,
+    monthName,
+    setMonthName,
+    year,
+    daysInMonth,
+    firstDayOfMonth,
+  } = useDisplay();
+
+  console.log(month);
+  console.log(daysInMonth);
 
   const [eventData, setEventData] = useState<CalendarEvent[] | null>(
     allCalendarEvents
@@ -36,18 +55,11 @@ function MonthlyCalendar() {
   }, [allCalendarEvents, labelData]);
 
   let date = new Date();
-
-  const [month, setMonth] = useState(new Date().getMonth()); // month starts from 0: Jan, 1: Feb, 2: March, 3: April
-  const [monthName, setMonthName] = useState(
-    date.toLocaleDateString("default", { month: "long" })
-  );
-  const [year, setYear] = useState(new Date().getFullYear());
-
-  const daysInMonth = new Date(year, month, 0).getDate();
-  const firstDayOfMonth = new Date(year, month, 0).getDay(); // day which the month starts on (monday, tuesday, etc)
+  const [displayYear, setDisplayYear] = useState(date.getFullYear());
 
   let d = 1;
   const daysArr: (number | null)[] = [];
+
   while (d <= firstDayOfMonth) {
     daysArr.push(null);
     d++;
@@ -61,19 +73,20 @@ function MonthlyCalendar() {
     if (dir == "+") {
       setMonth(month + 1);
       date = new Date(year, month + 1, 1);
+      if(date.getMonth() == 0) {
+        setDisplayYear(displayYear += 1);
+      }
+      console.log(date.getFullYear());
       setMonthName(date.toLocaleDateString("default", { month: "long" }));
     }
     if (dir == "-") {
       setMonth(month - 1);
       date = new Date(year, month - 1, 1);
+      if(date.getMonth() == 11) {
+        setDisplayYear(displayYear-1);
+      }
       setMonthName(date.toLocaleDateString("default", { month: "long" }));
     }
-  }
-
-  function today() {
-    setMonthName(date.toLocaleDateString("default", { month: "long" }));
-    setMonth(new Date().getMonth());
-    setYear(new Date().getFullYear());
   }
 
   const [calendarDay, setCalendarDay] = useState<null | number>(null);
@@ -84,17 +97,39 @@ function MonthlyCalendar() {
   }
 
   // new date is month/day/year and locale date string is day/month/year
-  // console.log(new Date(`${month}/1/${year}`).toLocaleDateString());
+  const notify = (children: string) => toast(children);
 
-  const submitNewEvent = (data: EventFormData) => {
-    console.log(data.title);
+  const createNewEvent = async (data: EventFormData) => {
+    submitNewEvent(data)
+      .then(() => {
+        notify("Success");
+        setModalType(null);
+      })
+      .catch((e) => console.log(e));
   };
+
+  const createNewLabel = (data: LabelFormData) => {
+    submitNewLabel(data).then(() => {
+        notify("Success");
+        setModalType(null);
+      })
+      .catch((e) => console.log(e));
+  }
 
   return (
     <main className={styles.cal_month}>
+      <ToastContainer />
       {modalType == "form" ? (
         <Modal>
-          <EventForm onSubmit={submitNewEvent} />
+          <EventForm onSubmit={createNewEvent} />
+          <button onClick={() => setModalType(null)}>Close modal</button>
+        </Modal>
+      ) : (
+        <></>
+      )}
+      {modalType == "label" ? (
+        <Modal>
+          <LabelForm onSubmit={createNewLabel} />
           <button onClick={() => setModalType(null)}>Close modal</button>
         </Modal>
       ) : (
@@ -102,12 +137,11 @@ function MonthlyCalendar() {
       )}
       <header>
         <button onClick={() => changeMonth("-")}>last month</button>
-        <h1>{monthName}</h1>
+        <h1>
+          {monthName} {displayYear}
+        </h1>
         <button onClick={() => changeMonth("+")}>next month</button>
       </header>
-      <div>
-        <button onClick={() => today()}>today</button>
-      </div>
       <div className={styles.weekdays}>
         {weekdays.map((d) => {
           return <div className={styles.day}>{d}</div>;
@@ -142,7 +176,7 @@ function MonthlyCalendar() {
               <p>{n}</p>
               {eventData?.map((e) =>
                 new Date(e.eventDate).toLocaleDateString() ==
-                new Date(`${month}/${n}/${year}`).toLocaleDateString() ? (
+                new Date(`${month + 1}/${n}/${year}`).toLocaleDateString() ? (
                   <CalendarItem item={e} />
                 ) : (
                   <></>
