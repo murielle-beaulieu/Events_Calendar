@@ -25,7 +25,8 @@ function MonthlyCalendar() {
     "Sunday",
   ];
 
-  const { allCalendarEvents, allLabels, submitNewEvent, submitNewLabel } = useEvents();
+  const { allCalendarEvents, allLabels, submitNewEvent, submitNewLabel, deleteEvent } =
+    useEvents();
 
   const {
     modalOpen,
@@ -40,9 +41,6 @@ function MonthlyCalendar() {
     daysInMonth,
     firstDayOfMonth,
   } = useDisplay();
-
-  console.log(month);
-  console.log(daysInMonth);
 
   const [eventData, setEventData] = useState<CalendarEvent[] | null>(
     allCalendarEvents
@@ -73,17 +71,16 @@ function MonthlyCalendar() {
     if (dir == "+") {
       setMonth(month + 1);
       date = new Date(year, month + 1, 1);
-      if(date.getMonth() == 0) {
-        setDisplayYear(displayYear += 1);
+      if (date.getMonth() == 0) {
+        setDisplayYear(displayYear + 1);
       }
-      console.log(date.getFullYear());
       setMonthName(date.toLocaleDateString("default", { month: "long" }));
     }
     if (dir == "-") {
       setMonth(month - 1);
       date = new Date(year, month - 1, 1);
-      if(date.getMonth() == 11) {
-        setDisplayYear(displayYear-1);
+      if (date.getMonth() == 11) {
+        setDisplayYear(displayYear - 1);
       }
       setMonthName(date.toLocaleDateString("default", { month: "long" }));
     }
@@ -109,12 +106,21 @@ function MonthlyCalendar() {
   };
 
   const createNewLabel = (data: LabelFormData) => {
-    submitNewLabel(data).then(() => {
+    submitNewLabel(data)
+      .then(() => {
         notify("Success");
         setModalType(null);
       })
       .catch((e) => console.log(e));
-  }
+  };
+
+  const removeEvent = (eventId: number) => {
+    deleteEvent(eventId)
+      .then(() => {
+        console.log("weehoo");
+      })
+      .catch((e) => console.log(e));
+  };
 
   return (
     <main className={styles.cal_month}>
@@ -142,26 +148,37 @@ function MonthlyCalendar() {
         </h1>
         <button onClick={() => changeMonth("+")}>next month</button>
       </header>
-      <div className={styles.weekdays}>
+      <section className={styles.weekdays}>
         {weekdays.map((d) => {
-          return <div className={styles.day}>{d}</div>;
+          return (
+            <div className={styles.day} key={d}>
+              {d}
+            </div>
+          );
         })}
-      </div>
-      {}
+      </section>
       <div className={styles.month}>
+        {/* Day modal, when clicked on a day it displays all events and extra info/actions (update/delete) */}
         {modalOpen ? (
           <article className={styles.modal}>
-            <h1>This is the day modal</h1>
             <h2>
               {monthName} {calendarDay}
             </h2>
             <button onClick={() => dayModal(null, false)}>Close modal</button>
             {eventData?.map((e) =>
-              calendarDay != null &&
-              e.day == `${calendarDay}` &&
-              e.month == `${month}` &&
-              e.year == `${year}` ? (
-                <CalendarItem item={e} />
+              new Date(e.eventDate).toLocaleDateString() ==
+              new Date(
+                `${month + 1}/${calendarDay}/${year}`
+              ).toLocaleDateString() ? (
+                <>
+                  <CalendarItem item={e} />
+                  <div>
+                    <button onClick={() => removeEvent(e.id)}>Delete</button>
+                    <button onClick={() => console.log("update the event")}>
+                      Update
+                    </button>
+                  </div>
+                </>
               ) : (
                 <></>
               )
@@ -170,6 +187,7 @@ function MonthlyCalendar() {
         ) : (
           <></>
         )}
+        {/* Display each day with the event within */}
         {daysArr.map((n) => {
           return (
             <div className={styles.cell} onClick={() => dayModal(n, true)}>

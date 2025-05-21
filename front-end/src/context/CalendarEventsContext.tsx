@@ -37,9 +37,12 @@ interface CalendarEventContextType {
   allCalendarEvents: CalendarEvent[];
   allLabels: Label[];
   submitNewEvent: (data: EventFormData) => Promise<void>;
-  submitNewLabel: (data: LabelFormData) => Promise<void>
+  submitNewLabel: (data: LabelFormData) => Promise<void>;
+  deleteEvent: (eventId: number) => Promise<void>;
+  updateEvent: (data: EventFormData) => Promise<void>;
 }
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const CalendarEventContext = createContext<
   CalendarEventContextType | undefined
 >(undefined);
@@ -70,19 +73,38 @@ export const CalendarEventContextProvider = ({
         data
       );
       getAllCalendarEvents();
-      console.log("Success:", response.data);
+      console.log("Successfully created: ", response.data);
     } catch (error) {
       console.error("Error:", error);
     }
   };
 
+  const updateEvent = async (data: EventFormData) => {
+    try {
+      const response = await axios.post(
+        "http://localhost:8080/calendar_events",
+        data
+      );
+      getAllCalendarEvents();
+      console.log("Successfully updated: ", response.data);
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  }
+
+  const deleteEvent = async (eventId: number) => {
+    try {
+      await axios.delete("http://localhost:8080/calendar_events/" + eventId);
+      console.log("Successfully deleted");
+      getAllCalendarEvents();
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  };
 
   const submitNewLabel = async (data: LabelFormData) => {
     try {
-      const response = await axios.post(
-        "http://localhost:8080/labels",
-        data
-      );
+      const response = await axios.post("http://localhost:8080/labels", data);
       getAllLabels();
       console.log("Success:", response.data);
     } catch (error) {
@@ -102,18 +124,25 @@ export const CalendarEventContextProvider = ({
   useEffect(() => {
     getAllCalendarEvents();
     getAllLabels();
-    console.log("weekeee");
   }, []);
 
   return (
     <CalendarEventContext.Provider
-      value={{ allCalendarEvents, allLabels, submitNewEvent,submitNewLabel }}
+      value={{
+        allCalendarEvents,
+        allLabels,
+        submitNewEvent,
+        submitNewLabel,
+        deleteEvent,
+        updateEvent
+      }}
     >
       {children}
     </CalendarEventContext.Provider>
   );
 };
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const useEvents = (): CalendarEventContextType => {
   const context = useContext(CalendarEventContext);
   if (!context) {

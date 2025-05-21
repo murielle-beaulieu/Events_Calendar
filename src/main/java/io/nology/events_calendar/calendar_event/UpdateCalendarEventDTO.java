@@ -16,7 +16,7 @@ public class UpdateCalendarEventDTO {
 
     private String location;
 
-    private Boolean deleted;
+    private Boolean isDeleted;
 
     private Long label;
 }

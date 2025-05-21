@@ -66,7 +66,7 @@ public class CalendarEvent {
     private Label label;
     
     @Column
-    private Boolean deleted;
+    private Boolean isDeleted;
 
     @Column
     @Temporal(TemporalType.TIMESTAMP)

@@ -8,7 +8,7 @@ interface CalendarItemProps {
 function CalendarItem({ item }: CalendarItemProps) {
   return (
     <div className={styles.event}>
-      <li>{item.title}</li>
+      <p>{item.title}</p>
     </div>
   );
 }
