@@ -13,6 +13,8 @@ import { ToastContainer, toast } from "react-toastify";
 import { EventFormData } from "../EventForm/event-schema";
 import LabelForm from "../LabelForm/LabelForm";
 import { LabelFormData } from "../LabelForm/label-schema";
+import EditModal from "../EditModal/EditModal";
+import UpdateEventForm from "../EventForm/UpdateEventForm";
 
 function MonthlyCalendar() {
   const weekdays = [
@@ -25,8 +27,14 @@ function MonthlyCalendar() {
     "Sunday",
   ];
 
-  const { allCalendarEvents, allLabels, submitNewEvent, submitNewLabel, deleteEvent } =
-    useEvents();
+  const {
+    allCalendarEvents,
+    allLabels,
+    submitNewEvent,
+    submitNewLabel,
+    updateEvent,
+    deleteEvent,
+  } = useEvents();
 
   const {
     modalOpen,
@@ -46,6 +54,14 @@ function MonthlyCalendar() {
     allCalendarEvents
   );
   const [labelData, setLabelData] = useState<Label[] | null>(allLabels);
+
+  const [editModal, setEditModal] = useState<boolean>(false);
+  const [editEventId, setEditEventId] = useState<number | null>(null);
+
+  const openEditModal = (eventId: number) => {
+    setEditModal(true);
+    setEditEventId(eventId);
+  };
 
   useEffect(() => {
     setEventData(allCalendarEvents);
@@ -122,6 +138,19 @@ function MonthlyCalendar() {
       .catch((e) => console.log(e));
   };
 
+  const editEvent = (eventId: number, data: EventFormData) => {
+    console.log(data);
+    updateEvent(eventId, data)
+      .then(() => {
+        console.log("weehoo");
+        notify("Success");
+        setEditEventId(null);
+        setModalOpen(false);
+        setEditModal(false);
+      })
+      .catch((e) => console.log(e));
+  };
+
   return (
     <main className={styles.cal_month}>
       <ToastContainer />
@@ -174,9 +203,7 @@ function MonthlyCalendar() {
                   <CalendarItem item={e} />
                   <div>
                     <button onClick={() => removeEvent(e.id)}>Delete</button>
-                    <button onClick={() => console.log("update the event")}>
-                      Update
-                    </button>
+                    <button onClick={() => openEditModal(e.id)}>Update</button>
                   </div>
                 </>
               ) : (
@@ -184,6 +211,23 @@ function MonthlyCalendar() {
               )
             )}
           </article>
+        ) : (
+          <></>
+        )}
+        {editModal ? (
+          <EditModal eventId={editEventId}>
+            {/* <EventForm
+              onSubmit={(data) => {
+                if (editEventId !== null) {
+                  editEvent(editEventId, data);
+                } else {
+                  console.error("No event ID to edit");
+                }
+              }}
+            /> */}
+            <UpdateEventForm onSubmit={() => console.log('frog')} eventId={editEventId}/>
+            <button onClick={() => setEditModal(false)}>Close</button>
+          </EditModal>
         ) : (
           <></>
         )}

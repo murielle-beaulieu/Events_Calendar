@@ -26,7 +26,7 @@ public class CalendarEventService {
 
     public List<CalendarEvent> getAllCalendarEvents() {
         List<CalendarEvent> all = this.eventRepo.findAll();
-        List<CalendarEvent> allActive = all.stream().filter((e) -> (e.getIsDeleted()).equals(false)).collect(Collectors.toList());
+        List<CalendarEvent> allActive = all.stream().filter((e) -> e.getIsDeleted() != null && !e.getIsDeleted()).collect(Collectors.toList());
         return allActive;
     }
 
@@ -39,20 +39,6 @@ public class CalendarEventService {
         return result;
     }
 
-    // public CalendarEvent createCalendarEvent(CreateCalendarEventDTO data) {
-
-    //     Optional<Label> labelResult = labelRepo.findById(data.getLabel());
-    //     if (labelResult.isEmpty()) {
-    //         Label labelFound = null;
-    //     }
-    //     Label labelFound = labelResult.get();
-
-    //     CalendarEvent newCalEvent = mapper.map(data, CalendarEvent.class);
-    //     newCalEvent.setLabel(labelFound);
-
-    //     return this.eventRepo.save(newCalEvent);
-    // }
-
     public CalendarEvent createCalendarEvent(CreateCalendarEventDTO data) {
         Label labelFound = null;
         
@@ -64,6 +50,7 @@ public class CalendarEventService {
         }
         
         CalendarEvent newCalEvent = mapper.map(data, CalendarEvent.class);
+        newCalEvent.setIsDeleted(false);
         newCalEvent.setLabel(labelFound);  // This will be null if no label was found
         
         return this.eventRepo.save(newCalEvent);
@@ -77,6 +64,9 @@ public class CalendarEventService {
         CalendarEvent found = result.get();
 
         Optional<Label> labelResult = labelRepo.findById(data.getLabel());
+        if (labelResult.isEmpty()) {
+            return null;
+        }
         Label labelFound = labelResult.get();
 
         found.setTitle(data.getTitle());

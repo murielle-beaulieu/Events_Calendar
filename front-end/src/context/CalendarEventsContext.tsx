@@ -35,11 +35,12 @@ export interface Label {
 
 interface CalendarEventContextType {
   allCalendarEvents: CalendarEvent[];
+  getCalendarEventById: (eventId: number) => Promise<CalendarEvent|null>;
   allLabels: Label[];
   submitNewEvent: (data: EventFormData) => Promise<void>;
   submitNewLabel: (data: LabelFormData) => Promise<void>;
   deleteEvent: (eventId: number) => Promise<void>;
-  updateEvent: (data: EventFormData) => Promise<void>;
+  updateEvent: (eventId: number, data: EventFormData) => Promise<void>;
 }
 
 // eslint-disable-next-line react-refresh/only-export-components
@@ -66,6 +67,21 @@ export const CalendarEventContextProvider = ({
     }
   };
 
+  const [eventById, setEventById] = useState<CalendarEvent>();
+
+  const getCalendarEventById = async (eventId: number) => {
+        try {
+      const response = await axios.get<CalendarEvent>(
+        `http://localhost:8080/calendar_events/${eventId}`
+      );
+      setEventById(response.data);
+      console.log(eventById);
+      return response.data;
+    } catch (error) {
+      throw new Error("Failed to retrieve calendar event by ID: " + error);
+    }
+  }
+
   const submitNewEvent = async (data: EventFormData) => {
     try {
       const response = await axios.post(
@@ -79,10 +95,10 @@ export const CalendarEventContextProvider = ({
     }
   };
 
-  const updateEvent = async (data: EventFormData) => {
+  const updateEvent = async (eventId: number, data: EventFormData) => {
     try {
-      const response = await axios.post(
-        "http://localhost:8080/calendar_events",
+      const response = await axios.put(
+        `http://localhost:8080/calendar_events/${eventId}`,
         data
       );
       getAllCalendarEvents();
@@ -90,7 +106,7 @@ export const CalendarEventContextProvider = ({
     } catch (error) {
       console.error("Error:", error);
     }
-  }
+  }    
 
   const deleteEvent = async (eventId: number) => {
     try {
@@ -130,6 +146,7 @@ export const CalendarEventContextProvider = ({
     <CalendarEventContext.Provider
       value={{
         allCalendarEvents,
+        getCalendarEventById,
         allLabels,
         submitNewEvent,
         submitNewLabel,
