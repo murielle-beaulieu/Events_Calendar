@@ -19,6 +19,7 @@ interface DisplayContextType {
   firstDayOfMonth: number;
 }
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const DisplayContext = createContext<DisplayContextType | undefined>(
   undefined
 );
@@ -36,7 +37,6 @@ export const DisplayContextProvider = ({
   const [year, setYear] = useState(new Date().getFullYear());
 
   const daysInMonth = new Date(year, month + 1, 0).getDate();
-  console.log(daysInMonth + " from display context and month " + month);
   const firstDayOfMonth = new Date(year, month, 0).getDay(); // day which the month starts on (monday, tuesday, etc)
 
   return (
@@ -48,6 +48,7 @@ export const DisplayContextProvider = ({
   );
 };
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const useDisplay = (): DisplayContextType => {
   const context = useContext(DisplayContext);
   if (!context) {

@@ -1,21 +1,45 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { useForm } from "react-hook-form";
 import { EventFormData, schema } from "./event-schema";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useEvents } from "../../context/CalendarEventsContext";
+import { CalendarEvent, useEvents } from "../../context/CalendarEventsContext";
+import { useEffect, useState } from "react";
 
 interface EventFormProps {
   onSubmit: (data: EventFormData) => unknown;
+  eventId: number | null;
 }
 
-function EventForm({ onSubmit }: EventFormProps) {
-  const { allLabels } = useEvents();
+function UpdateEventForm({ onSubmit, eventId }: EventFormProps) {
+  const { allLabels, getCalendarEventById } = useEvents();
 
+  const [eventToUpdate, setEventToUpdate] = useState<CalendarEvent | null>(null);
+
+  const findToUpdate = () => {
+    getCalendarEventById(eventId)
+    .then ((found) => {
+        setEventToUpdate(found);
+    })
+    .catch((e)=> console.log(e))
+}
+
+  useEffect(() => {findToUpdate()}, [eventId])
+
+  
+  
   const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<EventFormData>({ resolver: zodResolver(schema) });
-
+      register,
+      handleSubmit,
+      reset,
+      formState: { errors },
+    } = useForm<EventFormData>({ defaultValues: eventToUpdate, resolver: zodResolver(schema) });
+    
+    useEffect(() => {
+     if (eventToUpdate) {
+       reset(eventToUpdate);
+     }
+   }, [eventToUpdate, reset]);
+   
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
       <div>
@@ -56,4 +80,4 @@ function EventForm({ onSubmit }: EventFormProps) {
   );
 }
 
-export default EventForm;
+export default UpdateEventForm;

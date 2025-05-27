@@ -26,6 +26,6 @@ public class CreateCalendarEventDTO {
 
     private Long label;
 
-    private Boolean deleted = false;
+    private Boolean isDeleted = false;
 
 }

@@ -25,7 +25,9 @@ public class CalendarEventService {
     }
 
     public List<CalendarEvent> getAllCalendarEvents() {
-        return this.eventRepo.findAll();
+        List<CalendarEvent> all = this.eventRepo.findAll();
+        List<CalendarEvent> allActive = all.stream().filter((e) -> e.getIsDeleted() != null && !e.getIsDeleted()).collect(Collectors.toList());
+        return allActive;
     }
 
     public CalendarEvent getCalendarEventById(Long id) {
@@ -36,20 +38,6 @@ public class CalendarEventService {
         CalendarEvent result = found.get();
         return result;
     }
-
-    // public CalendarEvent createCalendarEvent(CreateCalendarEventDTO data) {
-
-    //     Optional<Label> labelResult = labelRepo.findById(data.getLabel());
-    //     if (labelResult.isEmpty()) {
-    //         Label labelFound = null;
-    //     }
-    //     Label labelFound = labelResult.get();
-
-    //     CalendarEvent newCalEvent = mapper.map(data, CalendarEvent.class);
-    //     newCalEvent.setLabel(labelFound);
-
-    //     return this.eventRepo.save(newCalEvent);
-    // }
 
     public CalendarEvent createCalendarEvent(CreateCalendarEventDTO data) {
         Label labelFound = null;
@@ -62,6 +50,7 @@ public class CalendarEventService {
         }
         
         CalendarEvent newCalEvent = mapper.map(data, CalendarEvent.class);
+        newCalEvent.setIsDeleted(false);
         newCalEvent.setLabel(labelFound);  // This will be null if no label was found
         
         return this.eventRepo.save(newCalEvent);
@@ -75,13 +64,16 @@ public class CalendarEventService {
         CalendarEvent found = result.get();
 
         Optional<Label> labelResult = labelRepo.findById(data.getLabel());
+        if (labelResult.isEmpty()) {
+            return null;
+        }
         Label labelFound = labelResult.get();
 
         found.setTitle(data.getTitle());
         found.setEventDate(data.getEventDate());
         found.setEventTime(data.getEventTime());
         found.setLocation(data.getLocation());
-        found.setDeleted(data.getDeleted());
+        found.setIsDeleted(data.getIsDeleted());
         found.setLabel(labelFound);
 
         return this.eventRepo.save(found);
@@ -90,7 +82,7 @@ public class CalendarEventService {
     public void deleteCalendarEvent(Long id) {
         Optional<CalendarEvent> result = this.eventRepo.findById(id);
         CalendarEvent found = result.get();
-        found.setDeleted(true);
+        found.setIsDeleted(true);
         this.eventRepo.save(found);
     }
 

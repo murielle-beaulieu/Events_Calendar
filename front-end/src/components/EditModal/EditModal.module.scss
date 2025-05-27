@@ -1,0 +1,13 @@
+.edit_modal {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: white;
+    border: solid 1px rgb(90, 90, 245);
+    height: 20em;
+    width: 20em;
+    position: absolute;
+    z-index: 1;
+    top: 10em;
+    left: 35em;
+}
